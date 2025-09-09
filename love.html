@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hacked by F4Y-XPLOIT">
+<meta property="og:description" content="To the authorities: I am not an ordinary hacker. My heart has been hacked by an Indian girl. Please do not deploy any forces — just allow me to accompany her with a cup of sweet tea.">
+<meta property="og:image" content="https://i.etsystatic.com/31885922/r/il/11e388/3324023994/il_794xN.3324023994_dcbf.jpg">
+  <title>Hacked by f4y-xploit</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff99;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .glitch {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20vh;
+      position: relative;
+      color: #00ff99;
+      animation: flicker 2s infinite;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      right: 0;
+      color: #ff0066;
+      background: black;
+      overflow: hidden;
+      clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::before {
+      animation: glitchTop 2s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      color: #00ccff;
+      animation: glitchBottom 1.5s infinite linear alternate-reverse;
+    }
+
+    @keyframes flicker {
+      0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+      20%, 24%, 55% { opacity: 0; }
+    }
+    @keyframes glitchTop {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      10% { clip: rect(10px, 9999px, 40px, 0); }
+      20% { clip: rect(20px, 9999px, 60px, 0); }
+      30% { clip: rect(40px, 9999px, 80px, 0); }
+      40% { clip: rect(10px, 9999px, 40px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+    @keyframes glitchBottom {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      10% { clip: rect(60px, 9999px, 90px, 0); }
+      20% { clip: rect(80px, 9999px, 120px, 0); }
+      30% { clip: rect(100px, 9999px, 140px, 0); }
+      40% { clip: rect(120px, 9999px, 160px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+
+    .message {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 30px;
+      color: #ddd;
+    }
+
+    button {
+      display: block;
+      margin: 50px auto;
+      padding: 15px 40px;
+      font-size: 1.1em;
+      color: #00ffcc;
+      background: transparent;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+    button:hover {
+      background: #00ffcc;
+      color: black;
+      box-shadow: 0 0 20px #00ffcc;
+    }
+
+    /* Matrix effect */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="glitch" data-text="Hacked by f4y-xploit">Hacked by f4y-xploit</div>
+<div class="message">
+  To the authorities: I am not an ordinary hacker.<br>
+  I am a hacker whose heart has been hacked by an Indian girl.<br>
+  Please do not deploy any forces — just allow me to accompany her<br>
+  with a cup of sweet tea.
+</div>
+ 
+  
+  <button id="playBtn">▶ Play Music</button>
+  <audio id="bgMusic" loop>
+    <source src="https://a.top4top.io/m_3539cazgt2.mp3" type="audio/mpeg">
+  </audio>
+
+  <canvas id="matrix"></canvas> 
+
+  <script>
+    // Matrix Rain
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "01F4YXPL0ITLOVE❤".split("");
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 35);
+
+    // Audio control
+    const playBtn = document.getElementById("playBtn");
+    const bgMusic = document.getElementById("bgMusic");
+    let playing = false;
+
+    playBtn.addEventListener("click", () => {
+      if (!playing) {
+        bgMusic.play();
+        playBtn.textContent = "⏸ Pause Music";
+        playing = true;
+      } else {
+        bgMusic.pause();
+        playBtn.textContent = "▶ Play Music";
+        playing = false;
+      }
+    });
+  </script>
+</body>
+</html>
