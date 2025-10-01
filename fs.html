@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fake Live Stream Comments — Fay</title>
+  <style>
+    body {
+  margin: 0;
+  background: transparent; /* Transparan */
+  color: #fff;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+    .comments {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      /* Padding ditingkatkan untuk tampilan full layar */
+      padding: 20px; 
+      box-sizing: border-box;
+    }
+    .comment {
+      display: flex;
+      align-items: center;
+      margin: 6px 0;
+      /* Ukuran font lebih besar */
+      font-size: 24px; 
+      animation: rise 0.5s linear forwards; 
+    }
+    .avatar {
+      /* Ukuran avatar diperbesar */
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-weight: bold;
+      color: #fff;
+      font-size: 20px;
+    }
+    @keyframes rise {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="comments" id="comments"></div>
+
+  <script>
+    const NAMES = [
+      'Zikri','Dian','Gina','Rara','Alif','Riko','Tasya','Bima','Nisa','Intan','Fajar','Bayu','Dewi','Maya','Riyan','Vina','Fathin','Hendra','Sinta','Rudi',
+      'Andi','Lina','Wulan','Joko','Citra','Putri','Eka','Doni','Sari','Nadia','Rangga','Agus','Cahya','Fikri','Indah','Siska','Tono','Ayu','Rio','Farah',
+      'Gilang','Hani','Irfan','Jihan','Kevin','Lala','Maman','Nunu','Oscar','Pia','Qori','Rani','Samuel','Tina','Umar','Vina','Wendy','Xena','Yani','Zaki'
+    ];
+    
+    // Lebih dari 100 pesan unik (dipertahankan)
+    const ALL_MESSAGES = [
+      'Ohh Godness its Fay','love u Fay','🥰🥰🥰','slayyyy 🔥','kapan collabnya?','Fay queen','suka banget kontennya','wow keren!',
+      'ngakak gila','donasi dong','follow back pls','ayo main bareng!','lo paling kece','gabisa move on','baper nih','ganteng banget',
+      'cantik parah','udah subscribe belum?','nonton live tiap hari','respect banget!','semangat terus ya Fay','kontennya selalu fresh',
+      'ini dia yang kutunggu','hadirrr!','lancar jaya streamingnya','ga pernah telat nonton','idola banget deh','request lagu dong',
+      'paling asik emang live Fay','jangan lupa minum!','sehat selalu Fay','keren parah outfitnya','vibesnya positif banget','terbaikkkk!',
+      'makin sukses ya','pengen ketemu langsung','ajarin aku main game ini dong','mantap jiwa','parah sih kerennya','ngefans dari dulu',
+      'selalu bikin happy','live yang seru banget','makasih udah ngehibur','cinta banget sama Fay','top markotop!','gak ada lawan!',
+      'legend is back','udah di-share ke temen-temen','salam dari jauh','lanjutkan Fay!','ngarep disapa','kapan mabar lagi?','seru banget',
+      'aku terkesima','kamu luar biasa','gak pernah bosen liat Fay','asli ngakak','good job!','favorite streamer','ga nyangka bisa nonton',
+      'aku padamu','teruslah berkarya','salut sama usahanya','penampilan hari ini juara','terima kasih inspirasinya','aku kasih gift ya',
+      'ditunggu konten berikutnya','sukses selalu','kamu keren abis','semua pada nonton!','gak rugi nonton Fay','pasti banyak yang suka',
+      'pertahankan kualitasnya','aku mendukungmu','selalu ada buat Fay','semangat!','gais bantu like dong','aku baru gabung','welcome!',
+      'ini live ke berapa?','semoga rame terus','seneng banget','gak sabar nunggu','udah like belum?','nambah follower terus nih','wih gila!',
+      'makin hari makin bagus','aku terhibur','coba sapa aku dong','aku fans berat','terima kasih sudah hadir','aku dari kota sebelah',
+      'salute!','Fay emang beda','paling kece se-dunia','gak ada tandingannya','aku tunggu uploadan barunya','luar biasa','selalu terbaik',
+      'gak bakal nyesel nonton','gak sia-sia nungguin','perfect!','aku suka senyummu','seneng liat Fay ketawa','aura bintang!'
+    ];
+
+    const commentsDiv = document.getElementById('comments');
+    let availableMessages = [...ALL_MESSAGES]; 
+
+    function randomColor(){
+      // Menghapus hue 120 (hijau) untuk avatar dan nama
+      const hues = [0,40,200,260,300]; 
+      const h = hues[Math.floor(Math.random()*hues.length)];
+      return `hsl(${h},100%,50%)`; // Saturasi 100%
+    }
+    
+    function randomBrightColorForName(hues){
+      const h = random(hues);
+      // Warna nama dibuat lebih terang (lightness 70%) dan saturasi penuh
+      return `hsl(${h},100%,70%)`; 
+    }
+
+    function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    function spawnComment(){
+      const name = random(NAMES); 
+
+      if(availableMessages.length === 0) {
+        availableMessages = [...ALL_MESSAGES];
+      }
+
+      const msgIndex = Math.floor(Math.random() * availableMessages.length);
+      const msg = availableMessages[msgIndex];
+      availableMessages.splice(msgIndex, 1); 
+
+      const el = document.createElement('div');
+      el.className = 'comment';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      // Avatar tetap cerah (lightness 50%)
+      avatar.style.background = randomColor(); 
+      avatar.textContent = name.charAt(0).toUpperCase();
+
+      const text = document.createElement('div');
+      // Warna nama pengkomen lebih terang (Bright)
+      const nonGreenHues = [0,40,200,260,300];
+      text.innerHTML = `<span style="color:${randomBrightColorForName(nonGreenHues)};font-weight:bold">${name}</span>: ${msg}`; 
+
+      el.appendChild(avatar);
+      el.appendChild(text);
+
+      commentsDiv.prepend(el); 
+
+      // Batasi maksimal 20 komentar agar tidak terlalu penuh pada ukuran font yang besar
+      if(commentsDiv.children.length > 20){
+        commentsDiv.removeChild(commentsDiv.lastChild);
+      }
+    }
+
+    setInterval(spawnComment, 1000); 
+  </script>
+</body>
+</html>
