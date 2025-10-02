@@ -4,16 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fake Live Stream Comments — Fay</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      /* Background tetap hijau */
+      /* Background hijau */
       background: transparent; 
       color: #fff;
-      font-family: Oswald, sans-serif;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
       overflow: hidden;
     }
     .comments {
@@ -23,23 +21,25 @@
       width: 100%;
       display: flex;
       flex-direction: column-reverse;
-      /* Padding dikurangi agar komentar lebih rapat */
+      /* Padding rapat */
       padding: 10px; 
       box-sizing: border-box;
     }
     .comment {
       display: flex;
       align-items: center;
-      /* Margin dikurangi agar komentar lebih rapat */
+      /* Margin rapat */
+      font-weight: bold;
       margin: 3px 0; 
-      /* Ukuran font dikecilkan */
-      font-size: 18px; 
-      animation: rise 0.5s linear forwards; 
+      /* Ukuran font kecil */
+      font-size: 25px; 
+      /* Animasi disetel di JS dengan durasi acak */
+      animation: rise var(--rise-duration, 0.5s) ease-out forwards; 
     }
     .avatar {
-      /* Ukuran avatar diperkecil */
-      width: 25px;
-      height: 25px;
+      /* Ukuran avatar kecil */
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -47,7 +47,7 @@
       margin-right: 8px;
       font-weight: bold;
       color: #fff;
-      font-size: 16px;
+      font-size: 25px;
     }
     @keyframes rise {
       from { transform: translateY(100%); opacity: 0; }
@@ -59,52 +59,43 @@
   <div class="comments" id="comments"></div>
 
   <script>
+    // Nama akun 1 kata yang berkarakter
     const NAMES = [
-      // --- Nama Asli (50) ---
-      'Zikri','Dian','Gina','Rara','Alif','Riko','Tasya','Bima','Nisa','Intan','Fajar','Bayu','Dewi','Maya','Riyan','Vina','Fathin','Hendra','Sinta','Rudi',
-      'Andi','Lina','Wulan','Joko','Citra','Putri','Eka','Doni','Sari','Nadia','Rangga','Agus','Cahya','Fikri','Indah','Siska','Tono','Ayu','Rio','Farah',
-      'Gilang','Hani','Irfan','Jihan','Kevin','Lala','Maman','Nunu','Oscar','Pia',
-      
-      // --- Nama Berkarakter & Gaul (160) ---
-      'King Budix','Goku ke 2','Uciha Ucup','Fikri Gans','Queen Finaaa','Dirli Zkill','Lord Zulfan','Si Paling Senja','Bucin Fay','Gamer Pro KW','Raja Ngawi',
-      'Mbak e Prank','Sultan Mah Bebas','The Real Kenzo','Cewek Mamba','Badut Cinta','Akun Ke 3','Bocil Epep','Jagoan Mama','Anak KosID','Misterius 77',
-      'Siapa Hayoo','Bukan Kaleng2','The Last Warrior','Jomblo Happy','Mami Gaul','Papi Royal','Si Tukang Spam','Master Nge-lag','Cendol Dawet','Dewa Judi (Gaya)','Anti Drama Club',
-      'Baby Shark Doo','Mawar Berduri','Petani Sukses','Kang Cilok','Pak RT Online','Bunda Keren','Gendeng FC','Ninja Konoha','Hacker Cupu','Si Anak Malam','Bos Kecil',
-      'Miss Gabut','Pangeran Kegelapan','Ratu Drama','Admin Receh','Pekerja Keras','Anak Indie','Dilan 1990','Milea Sayang Fay','Tukang Ngopi','Netizen +62',
-      'Gajah Terbang','Singa Tidur','Si Imut Toxic','Kapten Oleng','Kapten Amerika (Lokal)','Black Panther KW','Siap Bosku','Juragan Empang','Kucing Gemoy',
-      'Jagoan Neon','Pemburu Diskon','Tukang Komen','Sobat Ambis','Calon Sarjana','Pejuang Skripsi','The Jak Mania','Aremania Sejati','Viking Persib','Bonek Mania',
-      'King Salman KW','Putri Salju ID','Boboiboy Mode','Upin Ipin Fans','Si Tukang Kritik','Komandan Gabut','Pakar Cinta','Professor Jomblo','Anak Sultan','Kaum Rebahan',
-      'Si Cantik Jelita','Si Ganteng Kalem','Mbaknya Warung','Mas-mas Kuli','Oppa Korea Lokal','Adik Kelas Baper','Kakak Senior Killer','Penjaga Warnet','Tukang Bakso Viral',
-      'Tukang Parkir Elite','Gue Adalah Elu','Bukan Siapa2','Hanya Penonton','Akun Bot 🤖','Si Paling Benar','Pendosa Kelas Kakap','Ahli Surga (Amin)','Si Pemalas','Raja Tidur',
-      'Si Tukang Ghosting','Korban PHP','Bukan Cindo','Anak Komplek','Warga Sipil','Pengusaha Muda','Investor Receh','Si paling Cuan','Si Paling Rugi','Anak Baik-Baik',
-      'Sholeh Club','Sholehah Club','Jomblo Fisabilillah','Tukang Nasi Goreng','Bapak Kos Galak','Emak-emak Rempong','Si Pencari Jodoh','Makhluk Astral','Alien Tampan',
-      'Manusia Bumi','Si Paling Alam','Anak Gunung','Anak Pantai','Penyuka Senja','Pecinta Hujan','Si Pelupa','Si Sombong','Sopir Truk','Bunda Tercinta',
-      'Anak Tunggal','Si Tengah','Si Sulung','Si Bungsu','Kembaran Fay','Gue Capek Ngetik','Ini Akun Asli','Akun Ke-99','Wibu Sejati','Oppa Oppa KW',
-      'Bestie Fay','My Love Fay','Hanya Nonton','Jangan Block Ya','Gue Beli Akun','Penggemar Rahasia','Si Tukang Ngopi','Gagal Move On 💔','Si Pemberi Harapan',
-      'Kapal Pecah','Tukang Gosip','Anak Jaksel','Jaksel Vibe','Healing Time','Si Pencari Damai','Pendiam Tapi Komen','Si Bocah Petualang','Akang Sunda','Neng Geulis'
+      'Kaisar','Bule','Jomblo','Sultan','Lord','Queen','Goku','Ucup','Fikri','Dirli','Zkill','Zulfan','Bucin','Gamer','Raja','Prank','Kenzo','Mamba','Badut','Bocil',
+      'Mama','KosID','Misterius','Warrior','Happy','Mami','Papi','Master','Dewa','Anti','Baby','Mawar','Petani','Kang','Bunda','Gendeng','Ninja','Hacker','Bos','Gabut',
+      'Pangeran','Ratu','Admin','Pekerja','Indie','Dilan','Milea','Ngopi','Netizen','Gajah','Singa','Imut','Kapten','Truk','Juragan','Kucing','Neon','Pemburu','Tukang',
+      'Sobat','Calon','Pejuang','TheJak','Arema','Viking','Bonek','Salman','Putri','Boboiboy','Upin','Kritik','Komandan','Pakar','Professor','Anak','Kaum','Cantik','Ganteng',
+      'Warung','Kuli','Oppa','Adik','Kakak','Penjaga','Bakso','Parkir','Gue','Asli','Bot','Benar','Pendosa','Ahli','Pemalas','Tidur','Ghosting','Korban','Cindo','Komplek',
+      'Warga','Pengusaha','Investor','Cuan','Rugi','Baik','Sholeh','Sholiha','Bapak','Emak','Jodoh','Makhluk','Alien','Manusia','Bumi','Alam','Gunung','Pantai','Senja','Hujan',
+      'Pelupa','Sombong','Sopir','Mama','Tunggal','Tengah','Sulung','Bungsu','Kembaran','Wibu','Bestie','Cinta','Nonton','Rahasia','Gagal','Pecah','Gosip','Jaksel','Healing',
+      'Damai','Pendiam','Bocah','Akang','Geulis','Fay'
     ];
     
+    // Pesan Fokus pada Reaksi Cepat, Ejekan, dan Ungkapan dengan penekanan huruf akhir
     const ALL_MESSAGES = [
-    // Reaksi Overdosis & Emosi (Diberi Emoji)
-    '😭😭😭 plisss ngakak parah','🤣🤣🤣🤣🤣 pecah perut gue!','anjir ni orang live lagi😭 gokil abis!','njirr😭 keren bgt ga boong','gile👻 bikin kaget deh!','Gak kuat sama lawaknya 😭😂','Muka gw sampe merah nahan tawa 😂','Baper bgt deh lihat scene ini 🥺','Teriak-teriak sendiri di kamar 🤣','Love u Fay, jangan capek nge-live yaa ♥️','Gue udah siapin tisu, jangan nangis Fay! 😭','Ini live ter-random tapi seru! 🤪','Stress hilang semua lihat Fay 💯','The real mood booster nih 💖','Fix auto nonton tiap hari! ✅','Woyy jangan ngadi-ngadiii 🤯','Lagi ngapain sih anjim?','Gak ada akhlak live kayak gini 😂',
-    
-    // Interaksi & Pertanyaan (Sebagian Diberi Emoji)
-    'Spill dong Fay, pake skin care apa? ✨','Kapan mabar lagi bang? Udah kangen 🎮','Tolong sapa dong, gue fans berat lu! 🙏','Yang setuju Fay the best, mana suaranya? 🙋‍♂️','Fay, dengerin lagu gue dong! 🎶','Kok bisa sesantai ini sih lu nge-live?','Udah makan belum Fay? Gue bawain nih 🍜','Gimana rasanya jadi Fay yang super keren? 👑','Gue baru gabung, lagi bahas apa nih?','Request dong Fay, coba deh...','Bagi-bagi resep sukses jadi streamer dong','Paling suka kalau Fay lagi serius gini 🤓','Kapan balik ke kota X? Kita kopdar yuk!','Mana nih tim begadang? 🌙','Fay, coba deh liatin komen dari user X','Apa sih rahasia biar gak bosen bikin konten?',
-    
-    // Pujian & Dukungan (Sebagian Diberi Emoji)
-    'Slayyyy 🔥 outfitnya gila!','Fay queen emang gak ada obat 💊','Gue respect bgt sama Fay! 🫡','Lo paling kece se-Indonesia! 🇮🇩','Cantik parah/Ganteng parah, gak nyangka! 😍','Vibesnya positif bgt! ☀️','Mantap jiwa, lanjutkan Fay! 💪','Top markotop! Gak ada lawan! 🥊','Legend is back, bro! 👑','Keren abis deh lu!','Aku padamu 💖, Fay!','Selalu bikin happy! 😊','Gak rugi kuota habis buat lu','Pertahankan kualitas kontennya ya! 👍','Makin sukses ya Fay, doa gue menyertai 🙏','Salut bgt sama usahanya!','Penampilan hari ini juara! 🏆','The real idola! 🌟','Gak pernah gagal bikin takjub! 😮','Always the best!','Gue dukung lu dari nol!','Paling beda dari yang lain! 🚀','Gak sia-sia gue nungguin! 😌',
-
-    // Komen Gaul Lainnya (Total 300+ item)
-    'Gasss Fay! Full senyum! 😄','Fix, gue jadiin wallpaper HP nih 📱','Fay udah kayak vitamin buat gue','Auto share ke grup WA keluarga 🤣','Tadi gue lagi di jalan, langsung minggir buat nonton!','Sumpah, gue gak bisa move on dari konten lu','Waktunya terlalu cepat kalau nonton lu live ⏰','Biarin deh gak tidur, yang penting nonton Fay','Cakep/Cantik bgt hari ini, bikin insecure 😭','Lo beneran manusia apa bidadari sih? 🧚','Gue nobar sama temen-temen nih! 🍻','Anjay, gokil bgt idenya! 💡','Terima kasih Fay udah bikin hari gue cerah 😇','Gue ngefans dari lu masih cupu dulu ✌️','Jangan lupa minum air putih ya, biar gak serak 💧','Asli, gue gak pernah bosen lihatin lu','Gue udah siapin kopi sama indomie nih ☕','Tiap malem gini terus ya Fay, biar rame! 🎉','Gue lagi di toilet, nekat nonton 😂','Gak kerasa udah 2 jam, cepet bgt!','Lo kayaknya lagi happy bgt deh, bagi-bagi dong','Gue baru bangun tidur, langsung nyalain live lu 🌅','Kapan bikin merch Fay? Gue mau beli! 🛍️','Jangan dengerin bacot haters ya Fay! 🔇','Lo inspirasi bgt buat gue!','Paling suka kalau lu lagi cerita-cerita gini 🗣️','Bikin ngakak sampe perut sakit','Gak sabar nunggu live lu yang selanjutnya','Lo emang definisi dari keren!','Gue pengen jadi adik/kakak lu deh','Fay the real entertainer!','Lo emang gifted bgt! 🎁','Makasih udah bikin gue lupa sama tugas 😭','Gue udah subscribe dari tahun jebot','Lo makin hari makin gemes deh 🐹','Gue sampe bolos kelas online demi lu (just kidding)','Wih, mantap banget settingan live lu','Coba deh liat komen gue, Fay!','Gue rela jadi kacung lu deh!','Lo adalah alasan kenapa gue suka nge-live juga','Udah kayak nonton konser, rame bgt! 🎤','Nanti di-upload di YouTube gak? 🎥','Gue kirim gift, coba liat Fay! 💸','Lagi sibuk apa nih di real life?','Lo selalu punya energi yang beda ⚡','Gue seneng lihat lu seneng gini','Fay, lo udah kayak keluarga buat gue 👨‍👩‍👧‍👦','Gue jadi semangat hidup lagi gara-gara lu','Lo bener-bener gak ada duanya!','Gue gak bisa berenti senyum liat lu 😁','Lo pahlawan tanpa tanda jasa gue!','Gue udah share ke seluruh kontak gue!','Lo selalu ngasih vibe positif!','Gue pengen deh bisa interaksi langsung','Lo bener-bener keren bgt, gak boong!','Gue gak nyangka bisa se-hype ini!','Lo adalah bintang paling terang! ⭐','Gue gak mau live ini kelar!','Lo selalu bikin gue penasaran! 🤔','Gue udah bookmark channel lu!','Lo pinter bgt nyari topik!','Gue dari tadi cuma ketawa doang 🤣','Lo udah kayak dewa live stream!','Gue sampe lupa mandi saking asiknya 🚿','Lo bener-bener bikin gue betah','Gue udah siapin alarm buat live besok ⏰','Lo bikin gue jadi rajin nonton!','Gue suka bgt warna rambut lu! 🌈','Lo selalu jadi panutan gue!','Gue gak akan pindah ke lain hati!','Lo udah kayak candu buat gue','Gue sampe hapal semua kebiasaan lu','Lo selalu bikin kejutan! 🎁','Gue udah siapin donasi nih, tunggu ya!','Lo beneran humble bgt!','Gue suka bgt cara lu ngomong','Lo selalu bikin gue termotivasi','Gue gak akan pernah bosen liat lu','Lo bener-bener idaman bgt!','Gue suka bgt kalau lu lagi nge-game 👾','Lo selalu menghargai fans lu','Gue gak mau live ini selesai!','Lo emang ratu/raja di sini! 👑','Gue bener-bener terharu! 😢','Lo selalu bikin hari gue indah','Gue suka bgt kalau lu lagi ketawa','Lo adalah alasan gue seneng!','Gue siap begadang buat lu!','Lo bener-bener penyelamat hidup gue','Gue gak bisa berhenti muji lu!','Lo selalu bikin gue kagum!','Gue udah siapin hadiah spesial! 🎂','Lo adalah yang terbaik di mata gue','Gue gak akan lupa sama momen ini','Lo selalu ada buat kita!','Gue suka bgt sama gaya fashion lu 👗','Lo bikin gue jadi lebih percaya diri','Gue siap jadi garda terdepan lu!','Lo adalah segalanya buat gue!','Gue suka bgt semua ide gila lu','Lo selalu bikin gebrakan baru!','Gue udah siapin paket data cadangan buat lu','Lo adalah yang paling berharga! 💎','Gue gak akan pernah lupa jasa lu','Lo selalu bikin gue ngerasa dihargai','Gue suka bgt sama candaan lu 🤭','Lo adalah yang tercantik/terganteng di dunia','Gue selalu nungguin notif dari lu','Lo bikin gue jadi rajin cek sosmed!','Gue suka bgt sama keunikan lu','Lo adalah yang paling gue cinta di dunia ini 💖','Gue udah siapin kopi item nih','Lo selalu jadi favorit gue!','Gue gak bisa berkata-kata lagi! 😶','Lo bikin gue jadi lebih baik','Gue suka bgt sama konten yang ini','Lo adalah yang paling aku kagumi!','Gue gak akan pernah ganti haluan','Lo selalu memukau penonton','Gue udah siapin kejutan manis! 🍬','Lo bikin gue teriak histeris! 😱','Gue gak bisa tidur abis nonton lu','Lo selalu di hati gue, gak akan kemana-mana ❤️','Gue suka bgt sama style lu Fay','Lo bikin gue jadi percaya diri lagi','Gue siap support lu sampai kapan pun','Lo adalah segalanya bagi gue, beneran deh','Gue suka bgt semua ide gila lu','Lo selalu bikin hal-hal gila!','Gue udah siapin paket data ekstra biar gak buffering','Lo adalah yang paling berharga!','Gue gak akan pernah lupa sama semua momen ini','Lo selalu bikin gue ngerasa penting','Gue suka bgt sama jokes lu yang receh tapi lucu','Lo adalah definisi dari sempurna! 💯','Gue selalu nungguin live lu kayak nungguin pacar','Lo bikin gue jadi rajin nonton live','Gue suka bgt sama keunikan di diri lu','Lo adalah yang paling gue cinta di dunia ini 🌍'
-];
-
+        'anjir cantik banget 😱', 'sabar Fay bule emang gitu 🤣🤣', 'BROOOOO!', 'WTF', 'Muka bule! 🤮', 'Ganti aja!',
+        '😭😭😭', '🤣🤣🤣', '🥰', '❤️', 'WTFFFFF!', 'OMG!!!', 'Siapa tuhhhhh?', 'Nextttt!', 'Nge-prankkkk', 'Kocak bangetttt!', 'Bule ngeselinnnnn', 
+        'Mending skip', 'Cewe/Cowo Halal', 'Sikattttt!', 'Gak asik', 'Gak jelassss', 'Mabok dia', 'Judes amattt', 'Sok coool', 'Ganteng/Cantik?', 'Anjayyyy', 'Gokil!',
+        'Emang gituuuu', 'Gini amatttt', 'Salting Fayyy', 'Sabar!', 'Skip aja', 'Woi!', 'Halo!', 'Bye!', 'Kenapaaa?', 'Kok bisaaa?', 'Hah?',
+        'Parahhh sih', 'Hajar Fayyy', 'Gassss!', 'Beneran?', 'Mata duitannnn', 'Biasa aja', 'Noob', 'Pro', 'EZ', 'Gini doang', 'Bagus!',
+        'Gak mau!', 'Malu-maluinnnn', 'Reaksi Fay?', 'Asliiiiii?', 'KW', 'Mirip siapaaaa?', 'Bego!', 'Sombong bgt', 'Cringe!', 'Ngopi dulu',
+        'Bucin mode', 'Wkwkwk', 'Lul', 'Lol', 'Fay cantikkkk!', 'Fay gans!', 'Ngeselin', 'Enek gue', 'Fix skip', 'Gak modallll', 'Keren bangetttt!',
+        'Jomblo nih', 'Cinta Fayyyy', 'The bestttttt', 'Gak tau diri', 'Ngece!', 'Kok diemmm?', 'Ganti oranggg', 'Seru abisss', 'Bosen', 'Mantap!',
+        'Capek liat', 'Yuk ngopi', 'Ngakak gilaaa', 'Cepat!', 'Lama!', 'Gas lagi', 'Suka!', 'Benci!', 'Aura-nya', 'Hoki bgt', 'Mampussss!',
+        'Sok iye', 'Moga diblok', 'Kamera gelap', 'Vibesnya', 'Tarik sissss!', 'Semongko!', 'Benerin mic', 'Volume kecil', 'Volume gede', 'Kuy lah',
+        'Ya ampun', 'Astagaaa', 'Lucu', 'Sumpah dah', 'Gak ada', 'Ada', 'Sini', 'Situ', 'Tahan!', 'Lepasin!', 'Batu bgt', 'Mikir!',
+        'Fay sabar', 'Fay kuat', 'Maju!', 'Mundur!', 'Terima!', 'Tolak!', 'Bisa!', 'Gak bisa!', 'Duit!', 'Sultan!', 'Miskin!', 'Kaya!',
+        'Hahahaha', 'Hehehe', 'Lala', 'Lili', 'Hayo!', 'Sialan', 'Ngarep', 'Tega!', 'Nangis', 'Cengeng', 'Laki/Cewek sejati', 'Emosi',
+        'Santai Fay', 'Serius!', 'Gak lucu', 'Ketawa', 'Marah', 'Tiba-tiba', 'Aduh!', 'Waduh!', 'Duh!', 'Sakit', 'Gagal', 'Sukses',
+        '😭😭😭', '🤣🤣🤣', '🥰', '❤️', 'APAANSIHHHHH', 'COBA LIATTTT', 'SALUTTTT', 'BISA GITU YA', 'BENERAN GA SIH', 'GAK PERCAYAAAA'
+    ];
 
 
     const commentsDiv = document.getElementById('comments');
     let availableMessages = [...ALL_MESSAGES]; 
 
     function randomColor(){
-      /* HUE 120 (hijau) ditambahkan kembali */
+      /* HUE 120 (hijau) disertakan */
       const hues = [0,40,120,200,260,300]; 
       const h = hues[Math.floor(Math.random()*hues.length)];
       return `hsl(${h},100%,50%)`; 
@@ -117,46 +108,58 @@
     }
 
     function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-    function spawnComment(){
-      const name = random(NAMES); 
-
-      // Logika untuk memastikan pesan unik
-      if(availableMessages.length === 0) {
-        availableMessages = [...ALL_MESSAGES];
-      }
-
-      const msgIndex = Math.floor(Math.random() * availableMessages.length);
-      const msg = availableMessages[msgIndex];
-      availableMessages.splice(msgIndex, 1); 
-
-      const el = document.createElement('div');
-      el.className = 'comment';
-
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar';
-      /* Warna Avatar sekarang bisa Hijau */
-      avatar.style.background = randomColor(); 
-      avatar.textContent = name.charAt(0).toUpperCase(); 
-
-      const text = document.createElement('div');
-      /* Warna Nama sekarang bisa Hijau */
-      const allHues = [0,40,120,200,260,300];
-      text.innerHTML = `<span style="color:${randomBrightColorForName(allHues)};font-weight:bold">${name}</span>: ${msg}`; 
-
-      el.appendChild(avatar);
-      el.appendChild(text);
-
-      commentsDiv.prepend(el); 
-
-      // Batasi maksimal 20 komentar di layar
-      if(commentsDiv.children.length > 20){
-        commentsDiv.removeChild(commentsDiv.lastChild);
-      }
+    
+    // Fungsi untuk mendapatkan delay acak (jitter)
+    function randomDelay(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    /* Kecepatan Komen Dipercepat (0.5 detik) */
-    setInterval(spawnComment, 500); 
+    function spawnComment(){
+        // Tambahkan delay acak untuk efek realistis (jitter)
+        const initialDelay = randomDelay(10, 500); // Jeda 10ms hingga 500ms
+        
+        setTimeout(() => {
+            const name = random(NAMES); 
+
+            // Logika untuk memastikan pesan unik
+            if(availableMessages.length === 0) {
+                availableMessages = [...ALL_MESSAGES];
+            }
+
+            const msgIndex = Math.floor(Math.random() * availableMessages.length);
+            const msg = availableMessages[msgIndex];
+            availableMessages.splice(msgIndex, 1); 
+
+            const el = document.createElement('div');
+            el.className = 'comment';
+
+            // Durasi animasi acak (0.3s hingga 0.8s) untuk variasi realistis
+            const animDuration = (randomDelay(300, 800) / 1000).toFixed(2);
+            el.style.setProperty('--rise-duration', `${animDuration}s`);
+
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.style.background = randomColor(); 
+            avatar.textContent = name.charAt(0).toUpperCase(); 
+
+            const text = document.createElement('div');
+            const allHues = [0,40,120,200,260,300];
+            text.innerHTML = `<span style="color:${randomBrightColorForName(allHues)};font-weight:bold">${name}</span>: ${msg}`; 
+
+            el.appendChild(avatar);
+            el.appendChild(text);
+
+            commentsDiv.prepend(el); 
+
+            // Batasi maksimal 20 komentar di layar
+            if(commentsDiv.children.length > 20){
+                commentsDiv.removeChild(commentsDiv.lastChild);
+            }
+        }, initialDelay);
+    }
+
+    /* Kecepatan utama spawn sangat cepat (0.3 detik) */
+    setInterval(spawnComment, 300); 
   </script>
 </body>
 </html>
