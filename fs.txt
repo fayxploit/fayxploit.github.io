@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fake Live Stream Comments — Fay</title>
+  <style>
+    body {
+      margin: 0;
+      /* Background hijau */
+      background: transparent; 
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      overflow: hidden;
+    }
+    .comments {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      /* Padding rapat */
+      padding: 10px; 
+      box-sizing: border-box;
+    }
+    .comment {
+      display: flex;
+      align-items: center;
+      /* Margin rapat */
+      font-weight: bold;
+      margin: 3px 0; 
+      /* Ukuran font kecil */
+      font-size: 25px; 
+      /* Animasi disetel di JS dengan durasi acak */
+      animation: rise var(--rise-duration, 0.5s) ease-out forwards; 
+    }
+    .avatar {
+      /* Ukuran avatar kecil */
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-weight: bold;
+      color: #fff;
+      font-size: 25px;
+    }
+    @keyframes rise {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="comments" id="comments"></div>
+
+  <script>
+    // Nama akun 1 kata yang berkarakter
+    const NAMES = [
+      'Kaisar','Bule','Jomblo','Sultan','Lord','Queen','Goku','Ucup','Fikri','Dirli','Zkill','Zulfan','Bucin','Gamer','Raja','Prank','Kenzo','Mamba','Badut','Bocil',
+      'Mama','KosID','Misterius','Warrior','Happy','Mami','Papi','Master','Dewa','Anti','Baby','Mawar','Petani','Kang','Bunda','Gendeng','Ninja','Hacker','Bos','Gabut',
+      'Pangeran','Ratu','Admin','Pekerja','Indie','Dilan','Milea','Ngopi','Netizen','Gajah','Singa','Imut','Kapten','Truk','Juragan','Kucing','Neon','Pemburu','Tukang',
+      'Sobat','Calon','Pejuang','TheJak','Arema','Viking','Bonek','Salman','Putri','Boboiboy','Upin','Kritik','Komandan','Pakar','Professor','Anak','Kaum','Cantik','Ganteng',
+      'Warung','Kuli','Oppa','Adik','Kakak','Penjaga','Bakso','Parkir','Gue','Asli','Bot','Benar','Pendosa','Ahli','Pemalas','Tidur','Ghosting','Korban','Cindo','Komplek',
+      'Warga','Pengusaha','Investor','Cuan','Rugi','Baik','Sholeh','Sholiha','Bapak','Emak','Jodoh','Makhluk','Alien','Manusia','Bumi','Alam','Gunung','Pantai','Senja','Hujan',
+      'Pelupa','Sombong','Sopir','Mama','Tunggal','Tengah','Sulung','Bungsu','Kembaran','Wibu','Bestie','Cinta','Nonton','Rahasia','Gagal','Pecah','Gosip','Jaksel','Healing',
+      'Damai','Pendiam','Bocah','Akang','Geulis','Fay'
+    ];
+    
+    // Pesan Fokus pada Reaksi Cepat, Ejekan, dan Ungkapan dengan penekanan huruf akhir
+    const ALL_MESSAGES = [
+        'anjir cantik banget 😱', 'sabar Fay bule emang gitu 🤣🤣', 'BROOOOO!', 'WTF', 'Muka bule! 🤮', 'Ganti aja!',
+        '😭😭😭', '🤣🤣🤣', '🥰', '❤️', 'WTFFFFF!', 'OMG!!!', 'Siapa tuhhhhh?', 'Nextttt!', 'Nge-prankkkk', 'Kocak bangetttt!', 'Bule ngeselinnnnn', 
+        'Mending skip', 'Cewe/Cowo Halal', 'Sikattttt!', 'Gak asik', 'Gak jelassss', 'Mabok dia', 'Judes amattt', 'Sok coool', 'Ganteng/Cantik?', 'Anjayyyy', 'Gokil!',
+        'Emang gituuuu', 'Gini amatttt', 'Salting Fayyy', 'Sabar!', 'Skip aja', 'Woi!', 'Halo!', 'Bye!', 'Kenapaaa?', 'Kok bisaaa?', 'Hah?',
+        'Parahhh sih', 'Hajar Fayyy', 'Gassss!', 'Beneran?', 'Mata duitannnn', 'Biasa aja', 'Noob', 'Pro', 'EZ', 'Gini doang', 'Bagus!',
+        'Gak mau!', 'Malu-maluinnnn', 'Reaksi Fay?', 'Asliiiiii?', 'KW', 'Mirip siapaaaa?', 'Bego!', 'Sombong bgt', 'Cringe!', 'Ngopi dulu',
+        'Bucin mode', 'Wkwkwk', 'Lul', 'Lol', 'Fay cantikkkk!', 'Fay gans!', 'Ngeselin', 'Enek gue', 'Fix skip', 'Gak modallll', 'Keren bangetttt!',
+        'Jomblo nih', 'Cinta Fayyyy', 'The bestttttt', 'Gak tau diri', 'Ngece!', 'Kok diemmm?', 'Ganti oranggg', 'Seru abisss', 'Bosen', 'Mantap!',
+        'Capek liat', 'Yuk ngopi', 'Ngakak gilaaa', 'Cepat!', 'Lama!', 'Gas lagi', 'Suka!', 'Benci!', 'Aura-nya', 'Hoki bgt', 'Mampussss!',
+        'Sok iye', 'Moga diblok', 'Kamera gelap', 'Vibesnya', 'Tarik sissss!', 'Semongko!', 'Benerin mic', 'Volume kecil', 'Volume gede', 'Kuy lah',
+        'Ya ampun', 'Astagaaa', 'Lucu', 'Sumpah dah', 'Gak ada', 'Ada', 'Sini', 'Situ', 'Tahan!', 'Lepasin!', 'Batu bgt', 'Mikir!',
+        'Fay sabar', 'Fay kuat', 'Maju!', 'Mundur!', 'Terima!', 'Tolak!', 'Bisa!', 'Gak bisa!', 'Duit!', 'Sultan!', 'Miskin!', 'Kaya!',
+        'Hahahaha', 'Hehehe', 'Lala', 'Lili', 'Hayo!', 'Sialan', 'Ngarep', 'Tega!', 'Nangis', 'Cengeng', 'Laki/Cewek sejati', 'Emosi',
+        'Santai Fay', 'Serius!', 'Gak lucu', 'Ketawa', 'Marah', 'Tiba-tiba', 'Aduh!', 'Waduh!', 'Duh!', 'Sakit', 'Gagal', 'Sukses',
+        '😭😭😭', '🤣🤣🤣', '🥰', '❤️', 'APAANSIHHHHH', 'COBA LIATTTT', 'SALUTTTT', 'BISA GITU YA', 'BENERAN GA SIH', 'GAK PERCAYAAAA'
+    ];
+
+
+    const commentsDiv = document.getElementById('comments');
+    let availableMessages = [...ALL_MESSAGES]; 
+
+    function randomColor(){
+      /* HUE 120 (hijau) disertakan */
+      const hues = [0,40,120,200,260,300]; 
+      const h = hues[Math.floor(Math.random()*hues.length)];
+      return `hsl(${h},100%,50%)`; 
+    }
+    
+    function randomBrightColorForName(hues){
+      const h = random(hues);
+      // Warna nama dibuat lebih terang (lightness 70%)
+      return `hsl(${h},100%,70%)`; 
+    }
+
+    function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    
+    // Fungsi untuk mendapatkan delay acak (jitter)
+    function randomDelay(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function spawnComment(){
+        // Tambahkan delay acak untuk efek realistis (jitter)
+        const initialDelay = randomDelay(10, 500); // Jeda 10ms hingga 500ms
+        
+        setTimeout(() => {
+            const name = random(NAMES); 
+
+            // Logika untuk memastikan pesan unik
+            if(availableMessages.length === 0) {
+                availableMessages = [...ALL_MESSAGES];
+            }
+
+            const msgIndex = Math.floor(Math.random() * availableMessages.length);
+            const msg = availableMessages[msgIndex];
+            availableMessages.splice(msgIndex, 1); 
+
+            const el = document.createElement('div');
+            el.className = 'comment';
+
+            // Durasi animasi acak (0.3s hingga 0.8s) untuk variasi realistis
+            const animDuration = (randomDelay(300, 800) / 1000).toFixed(2);
+            el.style.setProperty('--rise-duration', `${animDuration}s`);
+
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.style.background = randomColor(); 
+            avatar.textContent = name.charAt(0).toUpperCase(); 
+
+            const text = document.createElement('div');
+            const allHues = [0,40,120,200,260,300];
+            text.innerHTML = `<span style="color:${randomBrightColorForName(allHues)};font-weight:bold">${name}</span>: ${msg}`; 
+
+            el.appendChild(avatar);
+            el.appendChild(text);
+
+            commentsDiv.prepend(el); 
+
+            // Batasi maksimal 20 komentar di layar
+            if(commentsDiv.children.length > 20){
+                commentsDiv.removeChild(commentsDiv.lastChild);
+            }
+        }, initialDelay);
+    }
+
+    /* Kecepatan utama spawn sangat cepat (0.3 detik) */
+    setInterval(spawnComment, 300); 
+  </script>
+</body>
+</html>
