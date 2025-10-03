@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Uhmegle Game - Pink Cheerful Theme</title>
+<style>
+  /* CSS Variables for easy color change */
+  :root {
+    --primary-color: #ff69b4; /* Hot Pink */
+    --secondary-color: #6a0572; /* Dark Purple/Dark Magenta */
+    --background-color: #f72585; /* Main Pink/Magenta */
+    --success-color: #38b000; /* Green (Kept for success contrast) */
+    --text-color: #fff;
+    --box-bg-color: rgba(106, 5, 114, 0.7); /* Transparent Purple */
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    /* Background gradient pink to purple */
+    background: linear-gradient(135deg, var(--background-color), var(--secondary-color));
+    color: var(--text-color);
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .screen {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .active { display: flex; }
+
+  /* --- Start Screen --- */
+  h1 { 
+    font-size: 3rem; 
+    margin-bottom: 0.5rem; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    font-weight: 800;
+  }
+  p { font-size: 1.2rem; }
+
+  .wave-img {
+    max-width: 250px;
+    margin-top: 20px;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+    animation: float 2.5s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
+  }
+
+  /* --- Play/Reset Button --- */
+  .play-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 16px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s, background 0.2s;
+    z-index: 100;
+  }
+  .play-btn:hover {
+    transform: scale(1.1);
+    background: #ff85c6;
+  }
+
+  /* --- Mission Box --- */
+  .mission-box {
+    background: var(--box-bg-color);
+    padding: 30px;
+    border-radius: 25px;
+    min-width: 350px;
+    max-width: 90%;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  .total-points-display {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  h2 { 
+    margin: 0 0 20px; 
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 8px;
+  }
+  ul { list-style: none; padding: 0; margin: 0; }
+
+  /* --- Mission Item (List Item) --- */
+  li {
+    margin: 15px 0;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s ease-out;
+    border-left: 5px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+  }
+  li:hover:not(.done) { 
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  li.done {
+    /* Using green success color for contrast against pink/purple theme */
+    background: rgba(var(--success-color-rgb, 56, 176, 0), 0.3); 
+    text-decoration: none;
+    border-left-color: var(--success-color);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  /* Done Icon (Using Emoji/Pseudo-element) */
+  li.done::after {
+    content: "✅";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.2);
+    font-size: 1.5rem;
+    color: var(--success-color);
+    animation: pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+  @keyframes pop {
+    to { transform: translateY(-50%) scale(1); }
+  }
+
+  .points {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    color: var(--primary-color);
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+  }
+
+  /* --- Level Complete / Game Over --- */
+  .level-done {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    animation: fadeScale 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  /* --- Next Button --- */
+  button.next-btn {
+    margin-top: 25px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 12px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background 0.2s, transform 0.2s;
+  }
+  button.next-btn:hover {
+    background: #ff85c6;
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+<body>
+
+<div class="screen active" id="startScreen">
+  <h1>Uhmegle Game</h1>
+  <p>Wave your hand to start 👋🏻</p>
+  <img class="wave-img" src="https://media.istockphoto.com/id/1414074140/id/foto/foto-wanita-menawan-yang-lucu-mengenakan-t-shirt-kasual-merekam-video-diri-melambaikan-telapak.jpg?s=612x612&w=0&k=20&c=NjZ2r43PwTO5atOjkNzjylKmrfYt3fmdh-Zp_RDVtrY=" alt="Person waving hand" onerror="this.src='https://via.placeholder.com/250/f72585/fff?text=WAVE'">
+</div>
+
+<div class="screen" id="gameScreen">
+  <div class="mission-box" id="missionBox">
+    </div>
+</div>
+
+<button class="play-btn" onclick="startGame()">▶</button>
+
+<script>
+let level = 0;
+let totalPoints = 0;
+const coinIcon = '💖'; // Pink Heart icon for points!
+
+const levels = [
+  [
+    {text: "Give a peace sign", icon: "✌🏻", point: 10},
+    {text: "Tie your hair", icon: "🎀", point: 20},
+    {text: "Raise your hands up", icon: "✋", point: 20}
+  ],
+  [
+    {text: "Jump once", icon: "🤸", point: 15},
+    {text: "Smile broadly", icon: "😀", point: 25},
+    {text: "Spin around", icon: "🔄", point: 30}
+  ],
+  [
+    {text: "Say 'Uhmegle!'", icon: "📢", point: 50},
+    {text: "Wink your eye", icon: "😉", point: 15},
+    {text: "Clap your hands", icon: "👏", point: 20}
+  ]
+];
+
+function startGame(){
+  document.getElementById("startScreen").classList.remove("active");
+  document.getElementById("gameScreen").classList.add("active");
+  // Change play button to reset icon
+  document.querySelector(".play-btn").innerHTML = "🔁"; 
+  level = 0;
+  totalPoints = 0;
+  showLevel();
+}
+
+function showLevel(){
+  if(level >= levels.length){
+    document.getElementById("missionBox").innerHTML = `
+      <div class="level-done">🎉 Game Over!</div>
+      <p style="font-size:1.5rem;">Congratulations! You are the Uhmegle champion!</p>
+      <div class="total-points-display">
+        Final Score: ${totalPoints} ${coinIcon}
+      </div>
+      <button class="next-btn" onclick="startGame()">Play Again</button>
+    `;
+    return;
+  }
+  
+  let html = `<h2>Level ${level+1}</h2><ul>`;
+  levels[level].forEach((m,i)=>{
+    html += `<li onclick="completeMission(this, ${m.point})"><span class="mission-text">${m.text} ${m.icon}</span>
+      <span class="points">${coinIcon}${m.point}</span>
+    </li>`;
+  });
+  html += "</ul>";
+  
+  html += `<div class="total-points-display" id="currentPointsDisplay">
+    Total Points: ${totalPoints} ${coinIcon}
+  </div>`;
+  
+  html += `<button class="next-btn" onclick="finishLevel()">Finish Level</button>`;
+  document.getElementById("missionBox").innerHTML = html;
+}
+
+function updatePointsDisplay() {
+  const displayElement = document.getElementById("currentPointsDisplay");
+  if (displayElement) {
+    displayElement.innerHTML = `Total Points: ${totalPoints} ${coinIcon}`;
+  }
+}
+
+function completeMission(li, p){
+  if(li.classList.contains("done")) return;
+  li.classList.add("done");
+  totalPoints += p;
+  updatePointsDisplay();
+}
+
+function finishLevel(){
+  const remainingMissions = levels[level].filter((_, i) => 
+    !document.getElementById("missionBox").querySelectorAll("li")[i].classList.contains("done")
+  );
+  
+  let resultMessage = "";
+  if (remainingMissions.length === 0) {
+    resultMessage = "Perfect! All missions complete!";
+  } else {
+    resultMessage = `Level finished with ${levels[level].length - remainingMissions.length}/${levels[level].length} missions succeeded!`;
+  }
+  
+  document.getElementById("missionBox").innerHTML = `
+    <div class="level-done">✔ Level ${level+1} Complete!</div>
+    <p>${resultMessage}</p>
+    <div class="total-points-display">
+      Current Total Points: ${totalPoints} ${coinIcon}
+    </div>
+    <button class="next-btn" onclick="nextLevel()">Next Level</button>
+  `;
+}
+
+function nextLevel(){
+  level++;
+  showLevel();
+}
+</script>
+</body>
+</html>
+  
